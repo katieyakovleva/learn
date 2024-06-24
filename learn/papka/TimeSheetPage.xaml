@@ -1,0 +1,41 @@
+﻿<Page x:Class="learn.papka.TimeSheetPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:learn.papka"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="TimeSheetPage" IsVisibleChanged="Page_IsVisibleChanged">
+
+    <Grid Background="#e7fabf">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <DataGrid x:Name="DataGridVisits" Grid.Row="0" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="30" SelectionMode="Single" LoadingRow="DataGridVisits_LoadingRow" Grid.RowSpan="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding uslugi.код_услуги}" Header="" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding uslugi.Наименование_услуги}" Header="Наименование услуги" Width="150"/>
+                <DataGridTextColumn Binding="{Binding client.Фамилия}" Header="Фамилия" Width="100"/>
+                <DataGridTextColumn Binding="{Binding client.Имя}" Header="Имя" Width="130"/>
+                <DataGridTextColumn Binding="{Binding client.Отчество}" Header="Отчество" Width="100"/>
+                <DataGridTextColumn Binding="{Binding client.Дата_регистрации}" Header="Дата" Width="100"/>
+                <DataGridTemplateColumn Width="100" Header="Редактировать">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button x:Name="BtnEdit" Content="..." Click="BtnEdit_Click" Margin="0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
+        <Button x:Name="BtnAdd" Grid.Row="2" HorizontalAlignment="Right" Margin="3" Width="100" Content="Добавить" Click="BtnAdd_Click"/>
+        <Button x:Name="BtnDelete" Grid.Row="2" Content="Удалить" HorizontalAlignment="Left" Margin="3" Width="100" Click="BtnDelete_Click"/>
+
+
+
+    </Grid>
+</Page>

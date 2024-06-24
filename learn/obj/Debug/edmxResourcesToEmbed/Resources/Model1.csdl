@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="uslugiModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="client">
+    <Key>
+      <PropertyRef Name="код_клиента" />
+    </Key>
+    <Property Name="код_клиента" Type="Int32" Nullable="false" />
+    <Property Name="Фамилия" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Имя" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Отчество" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Пол" Type="Int32" />
+    <Property Name="Телефон" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Дата_рождения" Type="DateTime" Precision="3" />
+    <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Дата_регистрации" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="gender" Relationship="Self.FK_client_gender" FromRole="client" ToRole="gender" />
+    <NavigationProperty Name="uslugi_client" Relationship="Self.FK_uslugi_client_client" FromRole="client" ToRole="uslugi_client" />
+  </EntityType>
+  <EntityType Name="gender">
+    <Key>
+      <PropertyRef Name="код_пола" />
+    </Key>
+    <Property Name="Пол" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="код_пола" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="client" Relationship="Self.FK_client_gender" FromRole="gender" ToRole="client" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="uslugi">
+    <Key>
+      <PropertyRef Name="код_услуги" />
+    </Key>
+    <Property Name="код_услуги" Type="Int32" Nullable="false" />
+    <Property Name="Наименование_услуги" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Главное_изображение" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Длительность" Type="Int32" />
+    <Property Name="Стоимость" Type="Double" />
+    <Property Name="Действующая_скидка" Type="Double" />
+    <NavigationProperty Name="uslugi_client" Relationship="Self.FK_uslugi_client_uslugi" FromRole="uslugi" ToRole="uslugi_client" />
+  </EntityType>
+  <EntityType Name="uslugi_client">
+    <Key>
+      <PropertyRef Name="код_оказания_услуги" />
+    </Key>
+    <Property Name="код_услуги" Type="Int32" />
+    <Property Name="код_оказания_услуги" Type="Int32" Nullable="false" />
+    <Property Name="Начало_услуги" Type="DateTime" Precision="3" />
+    <Property Name="время" Type="DateTime" Precision="3" />
+    <Property Name="код_клиента" Type="Int32" />
+    <NavigationProperty Name="client" Relationship="Self.FK_uslugi_client_client" FromRole="uslugi_client" ToRole="client" />
+    <NavigationProperty Name="uslugi" Relationship="Self.FK_uslugi_client_uslugi" FromRole="uslugi_client" ToRole="uslugi" />
+  </EntityType>
+  <Association Name="FK_client_gender">
+    <End Role="gender" Type="Self.gender" Multiplicity="0..1" />
+    <End Role="client" Type="Self.client" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="gender">
+        <PropertyRef Name="код_пола" />
+      </Principal>
+      <Dependent Role="client">
+        <PropertyRef Name="Пол" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_uslugi_client_client">
+    <End Role="client" Type="Self.client" Multiplicity="0..1" />
+    <End Role="uslugi_client" Type="Self.uslugi_client" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="client">
+        <PropertyRef Name="код_клиента" />
+      </Principal>
+      <Dependent Role="uslugi_client">
+        <PropertyRef Name="код_клиента" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_uslugi_client_uslugi">
+    <End Role="uslugi" Type="Self.uslugi" Multiplicity="0..1" />
+    <End Role="uslugi_client" Type="Self.uslugi_client" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="uslugi">
+        <PropertyRef Name="код_услуги" />
+      </Principal>
+      <Dependent Role="uslugi_client">
+        <PropertyRef Name="код_услуги" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="uslugiEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="client" EntityType="Self.client" />
+    <EntitySet Name="gender" EntityType="Self.gender" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <EntitySet Name="uslugi" EntityType="Self.uslugi" />
+    <EntitySet Name="uslugi_client" EntityType="Self.uslugi_client" />
+    <AssociationSet Name="FK_client_gender" Association="Self.FK_client_gender">
+      <End Role="gender" EntitySet="gender" />
+      <End Role="client" EntitySet="client" />
+    </AssociationSet>
+    <AssociationSet Name="FK_uslugi_client_client" Association="Self.FK_uslugi_client_client">
+      <End Role="client" EntitySet="client" />
+      <End Role="uslugi_client" EntitySet="uslugi_client" />
+    </AssociationSet>
+    <AssociationSet Name="FK_uslugi_client_uslugi" Association="Self.FK_uslugi_client_uslugi">
+      <End Role="uslugi" EntitySet="uslugi" />
+      <End Role="uslugi_client" EntitySet="uslugi_client" />
+    </AssociationSet>
+    <FunctionImport Name="sp_alterdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_creatediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_dropdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(uslugiModel.sp_helpdiagramdefinition_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(uslugiModel.sp_helpdiagrams_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_renamediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="new_diagramname" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_upgraddiagrams" />
+  </EntityContainer>
+  <ComplexType Name="sp_helpdiagramdefinition_Result">
+    <Property Type="Int32" Name="version" Nullable="true" />
+    <Property Type="Binary" Name="definition" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_helpdiagrams_Result">
+    <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+    <Property Type="Int32" Name="OwnerID" Nullable="false" />
+  </ComplexType>
+</Schema>

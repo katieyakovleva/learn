@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="uslugiModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="client">
+    <Key>
+      <PropertyRef Name="код_клиента" />
+    </Key>
+    <Property Name="код_клиента" Type="Int32" Nullable="false" />
+    <Property Name="Фамилия" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Имя" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Отчество" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Пол" Type="Int32" />
+    <Property Name="Телефон" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Дата_рождения" Type="DateTime" Precision="3" />
+    <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Дата_регистрации" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="gender" Relationship="Self.FK_client_gender" FromRole="client" ToRole="gender" />
+    <NavigationProperty Name="uslugi_client" Relationship="Self.FK_uslugi_client_client" FromRole="client" ToRole="uslugi_client" />
+  </EntityType>
+  <EntityType Name="gender">
+    <Key>
+      <PropertyRef Name="код_пола" />
+    </Key>
+    <Property Name="Пол" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="код_пола" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="clients" Relationship="Self.FK_client_gender" FromRole="gender" ToRole="client" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="uslugi">
+    <Key>
+      <PropertyRef Name="код_услуги" />
+    </Key>
+    <Property Name="код_услуги" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Наименование_услуги" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Главное_изображение" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Длительность" Type="Int32" />
+    <Property Name="Стоимость" Type="Double" />
+    <Property Name="Действующая_скидка" Type="Double" />
+    <NavigationProperty Name="uslugi_client" Relationship="Self.FK_uslugi_client_uslugi" FromRole="uslugi" ToRole="uslugi_client" />
+  </EntityType>
+  <EntityType Name="uslugi_client">
+    <Key>
+      <PropertyRef Name="код_оказания_услуги" />
+    </Key>
+    <Property Name="код_услуги" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="код_оказания_услуги" Type="Int32" Nullable="false" />
+    <Property Name="Начало_услуги" Type="DateTime" Precision="3" />
+    <Property Name="время" Type="DateTime" Precision="3" />
+    <Property Name="код_клиента" Type="Int32" />
+    <NavigationProperty Name="client" Relationship="Self.FK_uslugi_client_client" FromRole="uslugi_client" ToRole="client" />
+    <NavigationProperty Name="uslugi" Relationship="Self.FK_uslugi_client_uslugi" FromRole="uslugi_client" ToRole="uslugi" />
+  </EntityType>
+  <Association Name="FK_client_gender">
+    <End Role="gender" Type="Self.gender" Multiplicity="0..1" />
+    <End Role="client" Type="Self.client" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="gender">
+        <PropertyRef Name="код_пола" />
+      </Principal>
+      <Dependent Role="client">
+        <PropertyRef Name="Пол" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_uslugi_client_client">
+    <End Role="client" Type="Self.client" Multiplicity="0..1" />
+    <End Role="uslugi_client" Type="Self.uslugi_client" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="client">
+        <PropertyRef Name="код_клиента" />
+      </Principal>
+      <Dependent Role="uslugi_client">
+        <PropertyRef Name="код_клиента" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_uslugi_client_uslugi">
+    <End Role="uslugi" Type="Self.uslugi" Multiplicity="1" />
+    <End Role="uslugi_client" Type="Self.uslugi_client" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="uslugi">
+        <PropertyRef Name="код_услуги" />
+      </Principal>
+      <Dependent Role="uslugi_client">
+        <PropertyRef Name="код_услуги" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="uslugiEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="clients" EntityType="Self.client" />
+    <EntitySet Name="genders" EntityType="Self.gender" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <EntitySet Name="uslugis" EntityType="Self.uslugi" />
+    <EntitySet Name="uslugi_client" EntityType="Self.uslugi_client" />
+    <AssociationSet Name="FK_client_gender" Association="Self.FK_client_gender">
+      <End Role="gender" EntitySet="genders" />
+      <End Role="client" EntitySet="clients" />
+    </AssociationSet>
+    <AssociationSet Name="FK_uslugi_client_client" Association="Self.FK_uslugi_client_client">
+      <End Role="client" EntitySet="clients" />
+      <End Role="uslugi_client" EntitySet="uslugi_client" />
+    </AssociationSet>
+    <AssociationSet Name="FK_uslugi_client_uslugi" Association="Self.FK_uslugi_client_uslugi">
+      <End Role="uslugi" EntitySet="uslugis" />
+      <End Role="uslugi_client" EntitySet="uslugi_client" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
